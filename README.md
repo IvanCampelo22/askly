@@ -1,103 +1,121 @@
-# Nesta estrutura:
+# Askly | Backe-End
 
-- api/v1/endpoints/: Contém os arquivos de roteamento específicos para diferentes recursos como usuários, empresas e NPS.
-- apps/: Contém a lógica de negócio e acesso a dados.
-- auth/: Contém tudo relacionado à autenticação e autorização.
-- core/: Configurações centrais do projeto.
-- db/: Configuração de banco de dados e migrações.
-- exceptions/: Exceções personalizadas.
-- helpers/: Funções auxiliares.
-- models/: Modelos de banco de dados ORM.
-- schemas/: Esquemas Pydantic para validação de dados.
-- services/: Lógica de negócio e serviços da aplicação.
-- configs/: Arquivos de configuração para diferentes ambientes.
-- tests/: Testes de unidade e integração.
-- resources/: Templates de email e arquivos estáticos.
-- Os arquivos na raiz do projeto são para configuração do ambiente de desenvolvimento e produção, instruções de como rodar o projeto, e o ponto de entrada da aplicação (main.py).
+> O Askly é um projeto direcionado à empresas que buscam por praticidade e segurança no momento de realizar pesquisas de mercado e NPS. Seguindo a robustei e dinamicidade do Google Forms, o Askly busca entregar N possibilidades de construção de formulários, que também vai a uma N possibilidades de envios. Os clientes podem receber por email, que é a forma tradicional, mas também por wathsapp e telegram. Askly é prático, entrega possibilidades. 
 
-### No diretório celery_worker:
 
-- tasks/: Contém as definições das tarefas que o Celery executará.
-- celery_config.py: Contém as configurações do Celery, como o broker de mensagens e o backend de resultados.
-- celery_app.py: Cria a aplicação do Celery e importa as tarefas.
-- beat_schedule.py: (Opcional) Se estiver usando o Celery Beat, esse arquivo conteria o cronograma das tarefas periódicas.
+### Conteúdo
 
-```
-your_project_name/
-│
-├── api/
-│   ├── v1/
-│   │   ├── endpoints/
-│   │   │   ├── user_routes.py
-│   │   │   ├── company_routes.py
-│   │   │   ├── nps_routes.py
-│   │   │   └── __init__.py
-│   │   └── __init__.py
-│   └── __init__.py
-│
-├── apps/
-│   ├── auth/
-│   │   ├── jwt_handler.py
-│   │   └── __init__.py
-│   ├── core/
-│   │   ├── config.py
-│   │   └── __init__.py
-│   ├── db/
-│   │   ├── database.py
-│   │   ├── migrations/
-│   │   └── __init__.py
-│   ├── exceptions/
-│   │   └── custom_exceptions.py
-│   ├── helpers/
-│   │   ├── nps_calculator.py
-│   │   └── __init__.py
-│   ├── models/
-│   │   ├── user_model.py
-│   │   ├── company_model.py
-│   │   ├── nps_model.py
-│   │   └── __init__.py
-│   ├── schemas/
-│   │   ├── user_schema.py
-│   │   ├── company_schema.py
-│   │   ├── nps_schema.py
-│   │   └── __init__.py
-│   └── services/
-│       ├── user_service.py
-│       ├── company_service.py
-│       ├── nps_service.py
-│       └── __init__.py
-│
-├── celery_worker/
-│   ├── tasks/
-│   │   ├── __init__.py
-│   │   ├── email_tasks.py
-│   │   └── nps_tasks.py
-│   ├── celery_config.py
-│   ├── celery_app.py
-│   └── beat_schedule.py
-│
-├── configs/
-│   ├── development.py
-│   ├── production.py
-│   ├── testing.py
-│   └── __init__.py
-│
-├── tests/
-│   ├── test_user.py
-│   ├── test_company.py
-│   ├── test_nps.py
-│   └── __init__.py
-│
-├── resources/
-│   ├── email_templates/
-│   └── static_files/
-│
-├── .env
-├── .gitignore
-├── Dockerfile
-├── README.md
-├── requirements.txt
-├── main.py
-└── start.sh
+1. Tecnologias Usadas
+2. Executando via arquivo Docker Compose
+3. Como executar o projeto no linux
+4. Se sua distribuição adotar o PEP 668 
+5. Observação sobre execução do projeto sem o Docker
+6. Como fazer migrações no banco de dados
+7. Possíveis problemas
+8. Notas sobre o teste
 
-```
+
+## Tecnologias Usadas
+
+- Python
+- Fastapi
+- Postgresql
+- Docker
+
+
+## Executando via arquivo Docker Compose (Recomendado)
+
+1. Com o DockerCompose basta executar apenas um comando 
+
+> sudo docker compose up 
+
+2. Caso necessário refazer a imagem por conta de alguma alteração 
+
+> sudo docker compose up --build
+
+3. Teste docker compose 
+
+>  http://0.0.0.0:8080/docs
+
+* Obs:
+
+1. Para zerar o banco de dados do container basta digitar: 
+
+> sudo docker compose down
+
+> sudo docker compose down -v
+
+
+
+## Como executar o projeto no linux
+
+1. Ir até a pasta do projeto e criar a virualenv
+
+> virtualenv venv
+
+2. Ative a virtualenv
+
+> source venv/bin/activate
+
+3. Instale as dependencias
+
+> pip install -r requirements.txt
+
+4. Na raiz do projeto, onde estiver o arquivo main.py execute: 
+
+> python main.py
+
+* obs:
+
+> para rodar o projeto localmente sem o docker, é importante que no arquivo alembic.ini e no arquivo session.py estejam com a url do sqlalchemy com o host -> localhost. 
+
+> por padrão está -> db. 
+
+> db é o host do container
+
+> Os testes estão rodando de forma automática durante a iniciação do container
+
+
+### Se sua distribuição adotar o PEP 668 
+
+1. Ir até a pasta do projeto e criar a virualenv
+> python3 -m venv .venv
+
+2. Ative a virtualenv
+> source .venv/bin/activate
+
+3. Instale as dependencias
+
+> python3 -m pip install -r requirements.txt
+
+4. Na raiz do projeto, onde estiver o arquivo main.py execute: 
+
+> python3 -m main
+
+* Teste local
+
+> http://127.0.0.1:8080/docs
+
+
+## Como fazer migrações no banco de dados
+
+1. Execute o comando para criar o arquivo de migração no versions
+
+> alembic revision -m "<nome-da-migraçao>"
+
+2. Depois de criada a migração execute
+
+> alembic upgrade head --sql
+
+> alembic upgrade head
+
+
+## Possíveis problemas
+
+1. O docker não encontrar permissões para executar o start.sh
+
+> Na raiz do projeto onde está o start.sh execute o comando (que também está Dockerfile): chmod +x start.sh
+
+2. Credenciais no DockerCompose
+
+> No arquivo docker compose está as credenciais padrão de meu banco de dados local, caso ocorra problema, basta atualiza-las para as suas credenciais
